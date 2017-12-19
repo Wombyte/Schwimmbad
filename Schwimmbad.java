@@ -2,7 +2,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.swing.JOptionPane;
+
 public class Schwimmbad {
+	
+	String text = "";
+	
 	public static void main(String args[]) {
 		new Schwimmbad();
 	}
@@ -16,12 +21,22 @@ public class Schwimmbad {
 	boolean ferien = false;
 	
 	public Schwimmbad() {
+		//Daten einlesen
+		kinder = Integer.parseInt( JOptionPane.showInputDialog("Wie viele Kinder (u4) sind dabei?"));
+		jugendliche = Integer.parseInt( JOptionPane.showInputDialog("Wie viele Jugendliche (u16) sind dabei?"));
+		erwachsene = Integer.parseInt( JOptionPane.showInputDialog("Wie viele Erwachsene sind dabei?"));
+		gutscheine = Integer.parseInt( JOptionPane.showInputDialog("Wie viele Gutscheine sind dabei?"));
+		wochenende = Boolean.parseBoolean( JOptionPane.showInputDialog("Ist gerade Wochenende?"));
+		ferien = Boolean.parseBoolean( JOptionPane.showInputDialog("Sind gerade Ferien?"));
+		
 		//kontrolliert ob die Gruppe komplett eintreten darf
 		if(kinder > 0 && erwachsene == 0) {
-			System.out.println("Die kleinen Kinder können nicht ins Schwimmbad, da keine Person über 16 Jahren anwesend ist");
+			JOptionPane.showMessageDialog(null, "Die kleinen Kinder können nicht ins Schwimmbad, da keine Person über 16 Jahren anwesend ist");
 		}
 		else{
-			System.out.println("Die Gruppe muss " + kleinsterPreis() + "€ bezahlen");
+			double kleinsterPreis = kleinsterPreis();
+			
+			JOptionPane.showMessageDialog(null, text + "Die Gruppe muss " + kleinsterPreis + "€ bezahlen");
 		}
 		
 	}
@@ -36,15 +51,19 @@ public class Schwimmbad {
 		
 		double min_preis = preisBerechnen(jugendliche, erwachsene);
 		double preis;
+		String rabatt = "";
+		String kostenlos = "";
 			
 		//Gutschein ohne -10%
 		for(int i = 0; i <= gutscheine; i++) {
 			//vermeidet negative anzahl an Personen
 			if(jugendliche-i >= 0 && erwachsene-(gutscheine-i) >= 0) {
 				preis = preisBerechnen(jugendliche-i, erwachsene-(gutscheine-i));
-				System.out.println("kostenlos: " + i + " Jugendliche und " + (gutscheine-i) + " erwachsene");
-				System.out.println(" = " + preis + '\n');
-				if(preis < min_preis) min_preis = preis;
+				text += "kostenlos: " + i + " Jugendliche und " + (gutscheine-i) + " erwachsene" + '\n';
+				text += " = " + preis + '\n';
+				if(preis < min_preis) {
+					min_preis = preis;
+				}
 			}
 		}
 			
@@ -53,10 +72,12 @@ public class Schwimmbad {
 			//vermeidet negative anzahl an Personen
 			if(jugendliche-i >= 0 && erwachsene-(gutscheine-1-i) >= 0) {
 				preis = 0.9*preisBerechnen(jugendliche-i, erwachsene-(gutscheine-1-i));
-				System.out.println("kostenlos: " + i + " Jugendliche und " + (gutscheine-1-i) + " erwachsene");
-				System.out.println("-10%");
-				System.out.println(" = " + preis + '\n');
-				if(preis < min_preis) min_preis = preis;
+				text += "kostenlos: " + i + " Jugendliche und " + (gutscheine-1-i) + " erwachsene" + '\n';
+				text += "-10% (Gutschein)" + '\n';
+				text += " = " + preis + '\n';
+				if(preis < min_preis) {
+					min_preis = preis;
+				}
 			}
 		}
 		return min_preis;
@@ -102,22 +123,22 @@ public class Schwimmbad {
 			
 			//aktualisiert Preis und Anzahl der Personen 
 			if(min == normal) {
-				System.out.println("Normaler Preis für " + j + " Jugendliche und " + e + " Erwachsene: " + min + "€");
+				text += "Normaler Preis für " + j + " Jugendliche und " + e + " Erwachsene: " + min + "€" + '\n';
 			}
 			else if(min == gruppenTicket) {
-				System.out.println("Gruppenticket für " + j + " Jugendliche und " + e + " Erwachsene: " + min + "€");
+				text += "Gruppenticket für " + j + " Jugendliche und " + e + " Erwachsene: " + min + "€" + '\n';
 			}
 			else {
 				min = 8;
 				if(e >= 2 && j >= 2) {
 					e = 2;
 					j = 2;
-					System.out.println("Familienticket für 2 Jugendliche und 2 Erwachsene: 8€");
+					text += "Familienticket für 2 Jugendliche und 2 Erwachsene: 8€" + '\n';
 				}
 				else if(e >= 1 && j >= 3) {
 					e = 1;
 					j = 3;
-					System.out.println("Familienticket für 3 Jugendliche und 1 Erwachsene: 8€");
+					text += "Familienticket für 3 Jugendliche und 1 Erwachsene: 8€" + '\n';
 				}
 			}
 			preis += min;
